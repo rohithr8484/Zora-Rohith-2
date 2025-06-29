@@ -3,12 +3,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Coins, Upload, Zap, ExternalLink, CheckCircle } from 'lucide-react';
-import { useZoraCreate } from '../../hooks/useZoraCreate';
+import { useZoraCreate, CreateNFTParams } from '../../hooks/useZoraCreate';
 
 const createSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   animationUrl: z.string().url().optional().or(z.literal('')),
+  maxSupply: z.string().optional(),
+  pricePerToken: z.string().optional(),
   attributes: z.array(z.object({
     trait_type: z.string(),
     value: z.string()
@@ -22,6 +24,7 @@ interface CreatedItem {
   contractAddress: string;
   transactionHash: string;
   name: string;
+  metadataUri?: string;
 }
 
 export function ZoraCreateForm() {
@@ -46,10 +49,13 @@ export function ZoraCreateForm() {
 
     setIsCreating(true);
     try {
-      const result = await createNFT({
+      const params: CreateNFTParams = {
         ...data,
         imageFile,
-      });
+        maxSupply: data.maxSupply ? parseInt(data.maxSupply) : undefined,
+      };
+
+      const result = await createNFT(params);
       setCreatedItem(result);
       reset();
       setImageFile(null);
@@ -79,7 +85,7 @@ export function ZoraCreateForm() {
             <CheckCircle className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-semibold text-white mb-2">NFT Created Successfully!</h2>
-          <p className="text-slate-300 mb-6">Your NFT has been minted on Zora</p>
+          <p className="text-slate-300 mb-6">Your NFT has been minted on Zora Protocol</p>
           
           <div className="bg-slate-900/50 rounded-lg p-6 mb-6 text-left">
             <div className="grid grid-cols-1 gap-4">
@@ -95,6 +101,12 @@ export function ZoraCreateForm() {
                 <label className="text-sm text-slate-400">Contract Address</label>
                 <div className="text-white font-mono text-sm break-all">{createdItem.contractAddress}</div>
               </div>
+              {createdItem.metadataUri && (
+                <div>
+                  <label className="text-sm text-slate-400">Metadata URI</label>
+                  <div className="text-white font-mono text-xs break-all">{createdItem.metadataUri}</div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -126,7 +138,7 @@ export function ZoraCreateForm() {
         <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-teal-600 rounded-lg flex items-center justify-center">
           <Coins className="w-6 h-6 text-white" />
         </div>
-        <h2 className="text-2xl font-semibold text-white">Create NFT on Zora</h2>
+        <h2 className="text-2xl font-semibold text-white">Create NFT on Zora Protocol</h2>
       </div>
 
       {!isConnected && (
@@ -203,6 +215,38 @@ export function ZoraCreateForm() {
           )}
         </div>
 
+        {/* Max Supply */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Max Supply (Optional)
+          </label>
+          <input
+            {...register('maxSupply')}
+            type="number"
+            placeholder="1000"
+            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+          />
+          <p className="text-slate-400 text-sm mt-1">
+            Leave empty for unlimited supply
+          </p>
+        </div>
+
+        {/* Price Per Token */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Price Per Token (ETH, Optional)
+          </label>
+          <input
+            {...register('pricePerToken')}
+            type="text"
+            placeholder="0.01"
+            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+          />
+          <p className="text-slate-400 text-sm mt-1">
+            Set to 0 for free minting
+          </p>
+        </div>
+
         {/* Animation URL (Optional) */}
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -219,7 +263,7 @@ export function ZoraCreateForm() {
           )}
         </div>
 
-        {/* Zora Features */}
+        {/* Zora Protocol Features */}
         <div className="p-4 bg-purple-600/10 border border-purple-500/30 rounded-lg">
           <div className="flex items-center space-x-2 mb-2">
             <Zap className="w-5 h-5 text-purple-400" />
@@ -230,6 +274,7 @@ export function ZoraCreateForm() {
             <div>✓ Creator royalties</div>
             <div>✓ Open marketplace</div>
             <div>✓ Cross-platform compatibility</div>
+            <div>✓ IPFS metadata storage</div>
           </div>
         </div>
 
