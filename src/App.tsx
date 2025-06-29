@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { Toaster } from 'react-hot-toast';
 import { config } from './config/wagmi';
 import { Navbar } from './components/layout/Navbar';
@@ -14,13 +14,24 @@ import { ZoraPage } from './pages/ZoraPage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 
+// Import RainbowKit styles
+import '@rainbow-me/rainbowkit/styles.css';
+
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider
+          theme={darkTheme({
+            accentColor: '#8B5CF6',
+            accentColorForeground: 'white',
+            borderRadius: 'medium',
+            fontStack: 'system',
+            overlayBlur: 'small',
+          })}
+        >
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
               <Navbar />
@@ -39,6 +50,7 @@ function App() {
                 position="bottom-right"
                 toastOptions={{
                   className: 'bg-slate-800 text-white border border-slate-700',
+                  duration: 4000,
                 }}
               />
             </div>
