@@ -75,5 +75,20 @@ This project demonstrates:
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/your-username/zora-coins-uniswap-v4.git
-cd zora-coins-uniswap-v4
+
+# 1. Clone the repository
+git clone https://github.com/rohithr8484/Zora-Rohith-2.git
+
+# 2. Navigate into the project directory
+cd Zora-Rohith-2
+
+# 3. Install dependencies
+npm install
+# or, if you prefer yarn:
+# yarn install
+
+# 4. Run the development server
+npm run dev
+# or
+# yarn dev
+
