@@ -1,4 +1,4 @@
-# 🪙 Zora Coins - Creator Economy dApp
+# 🪙 Zora Coins
 
 Welcome to **Zora Coins**, a next-gen dApp built to power the **creator economy** by allowing users to **launch, trade, and support creator coins** using the **Zora Protocol** and **Uniswap V4** liquidity hooks.
 
